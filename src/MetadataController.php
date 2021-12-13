@@ -2,13 +2,12 @@
 
 namespace Admin\ResourceTools\Metadata;
 
-use App\Traits\WithMetadata;
-use Carbon\Carbon;
 use DB;
-use App\Models\Param;
 use InWeb\Admin\App\Http\Controllers\Controller;
 use InWeb\Admin\App\Http\Requests\ResourceDetailRequest;
 use InWeb\Admin\App\Http\Requests\ResourceUpdateRequest;
+use InWeb\Base\Entity;
+use InWeb\Metadata\WithMetadata;
 
 class MetadataController extends Controller
 {
@@ -34,7 +33,7 @@ class MetadataController extends Controller
      */
     public function update(ResourceUpdateRequest $request)
     {
-        /** @var WithMetadata $object */
+        /** @var WithMetadata|Entity $object */
         $object = $request->findModelOrFail();
 
         $resource = new MetadataResource($object->metadata);
@@ -43,14 +42,10 @@ class MetadataController extends Controller
 
         $model = DB::transaction(function () use ($request, $resource, $object) {
             if (!$object->metadata) {
-                $model = new \App\Models\Metadata();
-                $model->associateWith($object);
+                $model = new \InWeb\Metadata\Models\Metadata();
+                $model->metadatable()->associate($object);
             } else {
                 $model = $object->metadata()->lockForUpdate()->first();
-            }
-
-            if ($this->modelHasBeenUpdatedSinceRetrieval($request, $model)) {
-                return response('', 409)->throwResponse();
             }
 
             [$model, $callbacks] = $resource::fillForUpdate($request, $model);
@@ -61,27 +56,5 @@ class MetadataController extends Controller
         });
 
         return $model;
-    }
-
-    /**
-     * Determine if the model has been updated since it was retrieved.
-     *
-     * @param ResourceUpdateRequest $request
-     * @param \Illuminate\Database\Eloquent\Model $model
-     * @return bool
-     */
-    protected function modelHasBeenUpdatedSinceRetrieval(ResourceUpdateRequest $request, $model)
-    {
-        return false;
-
-        $column = $model->getUpdatedAtColumn();
-
-        if (!$model->{$column}) {
-            return false;
-        }
-
-        return $request->input('_retrieved_at') && $model->usesTimestamps() && $model->{$column}->gt(
-            Carbon::createFromTimestamp($request->input('_retrieved_at'))
-        );
     }
 }

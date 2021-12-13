@@ -2,7 +2,12 @@
 
 namespace Admin\ResourceTools\Metadata;
 
-use App\Models\Category;
+use InWeb\Admin\App\AuthorizedToSee;
+use InWeb\Admin\App\Fields\Text;
+use InWeb\Admin\App\Fields\Textarea;
+use InWeb\Admin\App\Http\Requests\AdminRequest;
+use InWeb\Admin\App\Panel;
+use InWeb\Admin\App\Resources\Resource;
 use InWeb\Admin\App\ResourceTool;
 
 class Metadata extends ResourceTool
@@ -12,16 +17,5 @@ class Metadata extends ResourceTool
     public function name()
     {
         return __('Мета данные');
-    }
-
-    public static function rules()
-    {
-        return [
-            'title' => 'required',
-            'slug'  => '',
-            'unit'  => '',
-            'main'  => '',
-            'object_id'  => 'required'
-        ];
     }
 }

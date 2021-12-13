@@ -72,7 +72,7 @@
                 App.api.request({
                     method: 'POST',
                     url: root + '/' + this.resourceName + '/' + this.resourceId,
-                    data: this.updateFormData
+                    data: this.updateFormData()
                 }).then(() => {
                     this.loading = false
 

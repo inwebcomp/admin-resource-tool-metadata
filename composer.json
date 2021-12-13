@@ -1,12 +1,13 @@
 {
     "name": "inweb/admin-resource-tool-metadata",
-    "description": "InWeb Admin resource tool",
+    "description": "InWeb Admin resource tool for metadata management",
     "keywords": [
-        "laravel"
+        "laravel",
+        "metadata"
     ],
     "license": "MIT",
     "require": {
-        "php": ">=7.1.0"
+        "php": "^7.1|^8.0"
     },
     "autoload": {
         "psr-4": {
